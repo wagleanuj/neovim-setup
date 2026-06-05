@@ -12,15 +12,17 @@ if tmux has-session -t "$SESSION" 2>/dev/null; then
   fi
 fi
 
-# --- detect dev + test commands ---
+# --- detect the LIKELY dev + test commands ---
+# These are PRE-TYPED on the prompt, NOT executed. You review/edit and press
+# Enter yourself. Nothing auto-runs except your editor.
 dev_cmd=""
 test_cmd=""
 if [ -f package.json ]; then
   if [ -f pnpm-lock.yaml ]; then pm="pnpm";
   elif [ -f yarn.lock ]; then pm="yarn";
   else pm="npm"; fi
-  grep -q '"dev"'  package.json && dev_cmd="$pm run dev"
-  grep -q '"test"' package.json && test_cmd="$pm test"
+  grep -q '"dev"'  package.json && dev_cmd="$pm run dev"  || true
+  grep -q '"test"' package.json && test_cmd="$pm test"    || true
 elif [ -f go.mod ]; then
   dev_cmd="go run ./..."
   test_cmd="go test ./..."
@@ -29,34 +31,29 @@ elif [ -f Cargo.toml ]; then
   test_cmd="cargo test"
 fi
 
-# infra command
-infra_cmd="echo 'no compose file'"
+infra_cmd=""
 if [ -f docker-compose.yml ] || [ -f docker-compose.yaml ] || [ -f compose.yml ] || [ -f compose.yaml ]; then
   infra_cmd="docker compose ps"
 fi
 
-# --- build session ---
+# --- create all windows first (shells boot + source ~/.zshrc here) ---
 tmux new-session -d -s "$SESSION" -n editor
+if [ -n "$dev_cmd" ];  then tmux new-window -t "$SESSION" -n server; fi
+if [ -n "$test_cmd" ]; then tmux new-window -t "$SESSION" -n tests;  fi
+tmux new-window -t "$SESSION" -n infra
+tmux new-window -t "$SESSION" -n ai
+
+# let each window's shell reach a prompt before we type into it
+sleep 1
+
+# the editor is the ONLY thing we auto-run
 tmux send-keys -t "$SESSION:editor" "nvim ." C-m
 
-win=2
-if [ -n "$dev_cmd" ]; then
-  tmux new-window -t "$SESSION:$win" -n server
-  tmux send-keys -t "$SESSION:server" "$dev_cmd" C-m
-  win=$((win+1))
-fi
-if [ -n "$test_cmd" ]; then
-  tmux new-window -t "$SESSION:$win" -n tests
-  tmux send-keys -t "$SESSION:tests" "$test_cmd" C-m
-  win=$((win+1))
-fi
-
-tmux new-window -t "$SESSION:$win" -n infra
-tmux send-keys -t "$SESSION:infra" "$infra_cmd" C-m
-win=$((win+1))
-
-tmux new-window -t "$SESSION:$win" -n ai
-tmux send-keys -t "$SESSION:ai" "claude" C-m
+# everything else is PRE-TYPED without Enter — you review/edit and run it
+if [ -n "$dev_cmd" ];   then tmux send-keys -t "$SESSION:server" "$dev_cmd"; fi
+if [ -n "$test_cmd" ];  then tmux send-keys -t "$SESSION:tests"  "$test_cmd"; fi
+if [ -n "$infra_cmd" ]; then tmux send-keys -t "$SESSION:infra"  "$infra_cmd"; fi
+tmux send-keys -t "$SESSION:ai" "claude"
 
 tmux select-window -t "$SESSION:editor"
 

@@ -32,6 +32,17 @@ Then:
 
 See `docs/superpowers/specs/` for the design.
 
+## The `dev` launcher
+
+Run `dev` in any project to open a tmux session named after the repo with windows:
+**editor / server / tests / infra / ai** (server & tests appear only when the project
+type is detected — Node/`package.json`, Go/`go.mod`, Rust/`Cargo.toml`).
+
+**Nothing auto-runs except your editor.** The server/tests/infra/ai windows open with the
+likely command *pre-typed on the prompt but not executed* — you review/edit it and press
+Enter yourself. So a bun repo shows `npm run dev` waiting; just change it and run it (or
+don't). Re-running `dev` in the same repo re-attaches instead of duplicating.
+
 ## AI auth (one-time)
 
 CodeCompanion uses your Claude subscription via the Claude Code CLI. Generate a token once:
