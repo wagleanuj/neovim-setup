@@ -1,9 +1,10 @@
 return {
-  -- oil: edit the filesystem like a buffer
+  -- oil: edit the filesystem like a buffer (on `-`).
+  -- default_file_explorer = false so neo-tree owns directory opening / the sidebar.
   {
     "stevearc/oil.nvim",
     opts = {
-      default_file_explorer = true,
+      default_file_explorer = false,
       view_options = { show_hidden = true },
       keymaps = { ["q"] = "actions.close" },
     },

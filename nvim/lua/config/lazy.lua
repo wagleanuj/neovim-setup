@@ -16,6 +16,8 @@ require("lazy").setup({
   spec = {
     -- LazyVim core
     { "LazyVim/LazyVim", import = "lazyvim.plugins" },
+    -- VS Code-like file tree sidebar (replaces the default snacks explorer)
+    { import = "lazyvim.plugins.extras.editor.neo-tree" },
     -- our plugin deltas
     { import = "plugins" },
   },

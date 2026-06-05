@@ -46,8 +46,9 @@ tmux new-window -t "$SESSION" -n ai
 # let each window's shell reach a prompt before we type into it
 sleep 1
 
-# the editor is the ONLY thing we auto-run
-tmux send-keys -t "$SESSION:editor" "nvim ." C-m
+# the editor is the ONLY thing we auto-run (cwd is already the project,
+# so `nvim` opens the dashboard + the neo-tree sidebar)
+tmux send-keys -t "$SESSION:editor" "nvim" C-m
 
 # everything else is PRE-TYPED without Enter — you review/edit and run it
 if [ -n "$dev_cmd" ];   then tmux send-keys -t "$SESSION:server" "$dev_cmd"; fi

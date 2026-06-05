@@ -73,8 +73,20 @@ Mouse is **on** — you can click windows/panes and scroll. From the shell: `tmu
 | `Space fr` | Recent files |
 | `Space /` or `Space sg` | **Grep** project (live search text) |
 | `Space ,` | Open buffers |
-| `Space e` | Toggle file explorer sidebar (Snacks) |
+| `Space e` | **Toggle the neo-tree sidebar** (collapse/expand) |
 | `Space fc` | Open your nvim config |
+
+### neo-tree sidebar (auto-opens on startup, `Space e` toggles)
+| Key | Action |
+|-----|--------|
+| `Space e` | Show/hide the tree |
+| `Enter` / `o` | Open file (in the editor to the right) |
+| `h` / `l` | Collapse / expand folder |
+| `a` `d` `r` | Add / delete / rename (file ops) |
+| `H` | Toggle hidden/dotfiles |
+| `s` / `S` | Open in vertical / horizontal split |
+| `P` | Toggle preview of the highlighted file |
+| `?` | Show all neo-tree keys |
 
 ### oil (the `-` file manager)
 | Key | Action |
