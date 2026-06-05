@@ -25,6 +25,8 @@ Launch everything from any repo: **`dev`** → attach later: **`tmux attach -t <
 | `C-a 1`..`5` | Jump to window by number (editor/server/tests/infra/ai) |
 | `C-a n` / `C-a p` | Next / previous window |
 | `C-a d` | **Detach** (session keeps running in background) |
+| `C-a Q` | **Quit/kill the whole session** (asks y/n) |
+| `C-a X` | Kill just the current window (asks y/n) |
 | `C-a c` | New window |
 | `C-a ,` | Rename window |
 | `C-a \|` | Split pane vertical (in cwd) |
