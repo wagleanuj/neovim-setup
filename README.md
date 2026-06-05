@@ -31,3 +31,19 @@ Then:
 | `bin/dev` | `~/.local/bin/dev` | smart project launcher |
 
 See `docs/superpowers/specs/` for the design.
+
+## AI auth (one-time)
+
+CodeCompanion uses your Claude subscription via the Claude Code CLI. Generate a token once:
+
+```bash
+claude setup-token
+```
+
+Then export it in your shell profile (`~/.zshrc`):
+
+```bash
+export CLAUDE_CODE_OAUTH_TOKEN="<token-from-setup-token>"
+```
+
+The tmux `ai` pane runs `claude` directly and uses your normal login — no token needed there.

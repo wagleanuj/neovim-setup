@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SESSION="$(basename "$PWD" | tr '.:' '__')"
+
+# already running? attach (or switch if inside tmux)
+if tmux has-session -t "$SESSION" 2>/dev/null; then
+  if [ -n "${TMUX:-}" ]; then
+    exec tmux switch-client -t "$SESSION"
+  else
+    exec tmux attach-session -t "$SESSION"
+  fi
+fi
+
+# --- detect dev + test commands ---
+dev_cmd=""
+test_cmd=""
+if [ -f package.json ]; then
+  if [ -f pnpm-lock.yaml ]; then pm="pnpm";
+  elif [ -f yarn.lock ]; then pm="yarn";
+  else pm="npm"; fi
+  grep -q '"dev"'  package.json && dev_cmd="$pm run dev"
+  grep -q '"test"' package.json && test_cmd="$pm test"
+elif [ -f go.mod ]; then
+  dev_cmd="go run ./..."
+  test_cmd="go test ./..."
+elif [ -f Cargo.toml ]; then
+  dev_cmd="cargo run"
+  test_cmd="cargo test"
+fi
+
+# infra command
+infra_cmd="echo 'no compose file'"
+if [ -f docker-compose.yml ] || [ -f docker-compose.yaml ] || [ -f compose.yml ] || [ -f compose.yaml ]; then
+  infra_cmd="docker compose ps"
+fi
+
+# --- build session ---
+tmux new-session -d -s "$SESSION" -n editor
+tmux send-keys -t "$SESSION:editor" "nvim ." C-m
+
+win=2
+if [ -n "$dev_cmd" ]; then
+  tmux new-window -t "$SESSION:$win" -n server
+  tmux send-keys -t "$SESSION:server" "$dev_cmd" C-m
+  win=$((win+1))
+fi
+if [ -n "$test_cmd" ]; then
+  tmux new-window -t "$SESSION:$win" -n tests
+  tmux send-keys -t "$SESSION:tests" "$test_cmd" C-m
+  win=$((win+1))
+fi
+
+tmux new-window -t "$SESSION:$win" -n infra
+tmux send-keys -t "$SESSION:infra" "$infra_cmd" C-m
+win=$((win+1))
+
+tmux new-window -t "$SESSION:$win" -n ai
+tmux send-keys -t "$SESSION:ai" "claude" C-m
+
+tmux select-window -t "$SESSION:editor"
+
+if [ -n "${TMUX:-}" ]; then
+  exec tmux switch-client -t "$SESSION"
+else
+  exec tmux attach-session -t "$SESSION"
+fi
