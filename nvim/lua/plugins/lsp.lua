@@ -19,7 +19,7 @@ return {
     },
   },
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     opts = {
       ensure_installed = {
         -- formatters / linters (LSP servers are handled by mason-lspconfig)
