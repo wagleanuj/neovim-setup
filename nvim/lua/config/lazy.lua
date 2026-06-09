@@ -18,6 +18,8 @@ require("lazy").setup({
     { "LazyVim/LazyVim", import = "lazyvim.plugins" },
     -- VS Code-like file tree sidebar (replaces the default snacks explorer)
     { import = "lazyvim.plugins.extras.editor.neo-tree" },
+    -- native Claude Code IDE integration (coder/claudecode.nvim)
+    { import = "lazyvim.plugins.extras.ai.claudecode" },
     -- our plugin deltas
     { import = "plugins" },
   },

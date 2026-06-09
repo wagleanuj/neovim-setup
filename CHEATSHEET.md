@@ -177,21 +177,27 @@ Inside Trouble: `Enter` jump, `q` close.
 
 ---
 
-## 9. AI — CodeCompanion (`Space a`)  +  Claude agent
+## 9. AI — Claude Code in Neovim (`Space a`)  +  Claude agent pane
+
+Native Claude Code integration (`claudecode.nvim`) — runs the `claude` CLI in a
+split, wired to your editor. Uses your normal Claude login (**no token/API key**).
 
 | Key | Action |
 |-----|--------|
-| `Space aa` | Toggle **AI chat** (works in normal & visual) |
-| `Space ac` | AI actions menu |
-| `Space ae` | (visual) **Explain** selected code |
-| `Space ar` | (visual) **Refactor** selected code |
+| `Space ac` | **Toggle Claude** (open/close the split) |
+| `Space af` | Focus the Claude window |
+| `Space as` | (visual) **Send selection** to Claude · (in tree) add file |
+| `Space ab` | Add current **buffer** to Claude's context |
+| `Space aa` | **Accept** the proposed diff |
+| `Space ad` | **Reject** the proposed diff |
+| `Space ar` | Resume a previous Claude session |
+| `Space aC` | Continue the last Claude session |
 
-In the chat buffer: type your question, `Enter` (or `C-s`) to send · `gA` apply suggested code · `q` close.
-**Requires once:** `claude setup-token` then `export CLAUDE_CODE_OAUTH_TOKEN=...` in `~/.zshrc`.
+Typical loop: select code → `Space as` → ask Claude → it proposes a diff → `Space aa` to accept / `Space ad` to reject. Add files to context from the neo-tree with `Space as`.
 
-**Claude agent (repo-wide):** `C-a 3` → just type. It reads files, edits, runs tests. No token needed there — uses your normal login.
+**Claude agent pane (repo-wide):** `C-a 3` (tmux) → a full-screen `claude`. Also no token — uses your login.
 
-> Two AI surfaces: `Space aa` = quick in-context help on what you're looking at. `C-a 3` = full agent for multi-file work.
+> Two surfaces: `Space ac` = Claude *inside* the editor with diff accept/reject. `C-a 3` = full agent for sprawling multi-file work.
 
 ---
 

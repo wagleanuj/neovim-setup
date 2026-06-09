@@ -12,7 +12,8 @@ cd ~/Documents/Projects/neovim-setup
 
 Then:
 1. Open `nvim` once — Mason auto-installs LSPs/formatters/debuggers.
-2. Run `claude setup-token` so in-editor AI (CodeCompanion) can use your Claude subscription.
+2. Make sure you're logged into Claude Code (`claude` once). In-editor AI uses
+   your normal login — no API key or token needed.
 3. In tmux, press `C-a I` to install tmux plugins.
 4. From any project: run `dev`.
 
@@ -43,18 +44,13 @@ likely command *pre-typed on the prompt but not executed* — you review/edit it
 Enter yourself. So a bun repo shows `npm run dev` waiting; just change it and run it (or
 don't). Re-running `dev` in the same repo re-attaches instead of duplicating.
 
-## AI auth (one-time)
+## AI
 
-CodeCompanion uses your Claude subscription via the Claude Code CLI. Generate a token once:
+In-editor AI is the native Claude Code integration (`claudecode.nvim`): `<leader>ac`
+toggles Claude in a split, `<leader>as` sends a selection, `<leader>aa`/`<leader>ad`
+accept/reject its diffs. The tmux `ai` window runs a full-screen `claude` agent.
 
-```bash
-claude setup-token
-```
-
-Then export it in your shell profile (`~/.zshrc`):
-
-```bash
-export CLAUDE_CODE_OAUTH_TOKEN="<token-from-setup-token>"
-```
+Both use your normal Claude Code login — **no API key or token**. Just make sure
+`claude` is logged in once (run it and follow the prompt).
 
 The tmux `ai` pane runs `claude` directly and uses your normal login — no token needed there.
