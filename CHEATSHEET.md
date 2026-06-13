@@ -23,6 +23,7 @@ Launch everything from any repo: **`dev`** → attach later: **`tmux attach -t <
 | Key | Action |
 |-----|--------|
 | `C-a 1`..`5` | Jump to window by number (editor/server/tests/infra/ai) |
+| — | Bottom bar shows each window with an icon;  nvim · 󰚩 claude · server ·  tests · 󰡨 infra ·  shell. Active one is highlighted. |
 | `C-a n` / `C-a p` | Next / previous window |
 | `C-a d` | **Detach** (session keeps running in background) |
 | `C-a Q` | **Quit/kill the whole session** (asks y/n) |
