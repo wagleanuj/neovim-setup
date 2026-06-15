@@ -33,6 +33,7 @@ session persistence — without the Electron weight.
   - [Sessions: remembering open files](#sessions-remembering-open-files)
 - [Languages supported](#languages-supported)
 - [Customizing](#customizing)
+- [Remote / SSH](#remote--ssh)
 - [Troubleshooting](#troubleshooting)
 
 ---
@@ -156,9 +157,14 @@ The bottom status bar shows each window with an app icon, active one highlighted
 | `C-a x` | Kill pane |
 | `C-a [` | Scroll/copy mode (vim keys; `q` exits) |
 
+**Seamless splits:** plain `C-h/j/k/l` (no prefix) move between panes *and* Neovim splits
+interchangeably (vim-tmux-navigator). `C-a [` copy mode now yanks (`y`) to the system
+clipboard (tmux-yank). `C-a C-j` opens a fuzzy session switcher (tmux-fzf; needs `fzf`).
+
 Other: mouse is **on** (click windows/panes, scroll). `C-a r` reloads the config.
 Plugins: tmux-sensible, **tmux-resurrect** + **tmux-continuum** (layout auto-restored on
-reboot). Graphics passthrough is enabled so inline images work through tmux.
+reboot), tmux-yank, tmux-fzf, vim-tmux-navigator. Graphics passthrough is enabled so inline
+images work through tmux. After adding plugins, press **`C-a I`** to install them.
 
 ---
 
@@ -185,9 +191,9 @@ infra:  % docker compose ps  (typed, only if a compose file exists)
 ai:     % claude             (typed, waiting)
 ```
 
-Detection: `package.json` (pnpm/yarn/npm by lockfile) · `go.mod` · `Cargo.toml`. A bun repo
-shows `npm run dev` — just edit it to `bun run dev` before Enter. Re-running `dev` in the
-same repo **re-attaches** instead of duplicating.
+Detection: `deno.json` · `package.json` (bun/pnpm/yarn/npm by lockfile) · `go.mod` ·
+`Cargo.toml` · `uv.lock` · `poetry.lock` · `mix.exs` · `Makefile` (`dev`/`test` targets).
+Re-running `dev` in the same repo **re-attaches** instead of duplicating.
 
 ---
 
@@ -217,10 +223,14 @@ the current directory; rename by editing names, delete by deleting lines, then `
 |-----|--------|
 | `Space Space` or `Space ff` | Find files (fuzzy) |
 | `Space /` or `Space sg` | Grep the whole project |
+| `Space sr` | **Search & replace across the project** (grug-far) |
+| `Space sw` | Search & replace the word under the cursor |
 | `Space fr` | Recent files · `Space ,` open buffers |
 | `Space fc` | Open your nvim config |
 
 In any picker: type to filter, `C-n`/`C-p` move, `Enter` open, `C-v` open in vsplit, `Esc` cancel.
+**grug-far** (`Space sr`) is the VS Code "Search" panel: edit the Search/Replace fields at
+the top, matches stream below across the whole project, and you apply the replacement in place.
 
 ### Code intelligence (LSP)
 
@@ -230,9 +240,13 @@ In any picker: type to filter, `C-n`/`C-p` move, `Enter` open, `C-v` open in vsp
 | `gr` / `gI` / `gy` | References / implementation / type definition |
 | `K` | Hover docs (press again to enter the float) |
 | `Space ca` | Code action (quick fix, auto-import) |
-| `Space cr` | Rename symbol (project-wide) |
+| `Space cr` | Rename symbol (project-wide; **live preview** as you type) |
+| `Space co` | **Outline** — symbols panel for the file (aerial) |
 | `Space cd` | Line diagnostics · `]d`/`[d` next/prev diagnostic |
 | `C-Space` | Trigger completion (insert mode) · `Tab` accept |
+
+A **breadcrumb trail** (barbecue) shows the symbol path in each window's top bar, and
+**sticky scroll** (`Space uc` toggles) pins the enclosing function/class while you scroll.
 
 ### Formatting
 
@@ -258,6 +272,10 @@ Falls back to the LSP formatter if a tool is missing.
 Inline you always get gutter signs, end-of-line virtual text, and statusline counts.
 Note: like all nvim LSPs, diagnostics cover files you've **opened** this session, not the
 whole disk — use the linter/CI or `Space sg` for a project-wide sweep.
+
+Beyond the LSPs, **nvim-lint** runs standalone linters on read/save: **shellcheck**
+(shell — covers this repo's own scripts), **hadolint** (Dockerfile), **markdownlint**,
+**yamllint**, and **golangci-lint** (go). Their findings show up in the same panel.
 
 ### Git
 
@@ -368,9 +386,12 @@ Pre-wired LSP + formatter + debugger + test runner for:
 - **TypeScript / JavaScript / Vue / web** — vtsls, vue_ls, tailwindcss, prismals, graphql,
   dockerls, yamlls, jsonls · prettier + eslint_d · jest/vitest
 - **Python** — pyright · ruff + black · debugpy · neotest-python
-- **Go** — gopls · gofmt · delve · neotest-go
+- **Go** — gopls · gofmt · delve (+ zero-config dap-go) · neotest-go · golangci-lint
 - **Rust** — rust-analyzer · rustfmt · codelldb
 - **Lua** — lua_ls · stylua
+- **Shell** — bashls · shellcheck (lint)
+- **Infra / config** — terraformls (HCL) · taplo (TOML) · dockerls + hadolint · yamllint · markdownlint
+- **C / C++** — clangd
 
 Add more via `:Mason` and a one-line entry in `nvim/lua/plugins/lsp.lua`.
 
@@ -384,6 +405,34 @@ Add more via `:Mason` and a one-line entry in `nvim/lua/plugins/lsp.lua`.
 - **Tree width / behavior:** `nvim/lua/plugins/explorer.lua`.
 - **`dev` detection/commands:** `bin/dev`.
 - **Keymaps:** `nvim/lua/config/keymaps.lua`; tmux in `tmux/.tmux.conf`.
+
+Editor niceties baked in: **persistent undo** (history survives reopening a file;
+visualize it with `Space uu` — undotree) and **live color swatches** for hex/rgb/tailwind
+values in code (nvim-colorizer).
+
+---
+
+## Remote / SSH
+
+This is arguably the **best** reason to use a terminal IDE: the whole stack runs on the
+remote box and your laptop is just the display. Install this repo on the server too
+(`git clone` + `./install.sh`) and run `dev` there.
+
+- **tmux is the safety net.** A dropped connection, closed lid, or flaky Wi-Fi doesn't
+  kill anything — your editor, dev server, and `claude` keep running on the remote.
+  Reconnect and `dev` (or `tmux attach`) drops you exactly where you left off.
+- **Clipboard works across the wire.** Neovim 0.11 auto-uses the **OSC52** escape sequence
+  when `$SSH_TTY` is set, so yanks on the remote land in your *local* clipboard
+  (Ghostty/Kitty/WezTerm support OSC52). tmux copy mode (`C-a [`, `y`) does the same.
+- **Linux hosts are covered.** `install.sh` falls back to `apt`/`dnf`/`pacman` when `brew`
+  isn't present, and installs `ripgrep` + `imagemagick` alongside `lazygit`/`fd`.
+- **Caveats:**
+  - *Inline images* (`snacks.image`) need the Kitty graphics protocol to tunnel through —
+    your local terminal must speak it (Ghostty/Kitty/WezTerm ✓) and `magick` must be
+    installed on the **remote**. It's the most fragile piece; markdown still renders
+    styled either way.
+  - *Browser markdown preview* (`Space mp`) launches a browser **on the remote** — use
+    `ssh -L` port-forwarding to view it locally, or rely on inline rendering.
 
 After editing tmux config: `C-a r` to reload. After editing nvim: restart or `:Lazy reload`.
 
