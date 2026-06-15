@@ -17,8 +17,12 @@ fi
 # Enter yourself. Nothing auto-runs except your editor.
 dev_cmd=""
 test_cmd=""
-if [ -f package.json ]; then
-  if [ -f pnpm-lock.yaml ]; then pm="pnpm";
+if [ -f deno.json ] || [ -f deno.jsonc ]; then
+  dev_cmd="deno task dev"
+  test_cmd="deno test"
+elif [ -f package.json ]; then
+  if   [ -f bun.lockb ] || [ -f bun.lock ]; then pm="bun";
+  elif [ -f pnpm-lock.yaml ]; then pm="pnpm";
   elif [ -f yarn.lock ]; then pm="yarn";
   else pm="npm"; fi
   grep -q '"dev"'  package.json && dev_cmd="$pm run dev"  || true
@@ -29,6 +33,18 @@ elif [ -f go.mod ]; then
 elif [ -f Cargo.toml ]; then
   dev_cmd="cargo run"
   test_cmd="cargo test"
+elif [ -f uv.lock ]; then
+  dev_cmd="uv run python -m ."
+  test_cmd="uv run pytest"
+elif [ -f poetry.lock ]; then
+  dev_cmd="poetry run python -m ."
+  test_cmd="poetry run pytest"
+elif [ -f mix.exs ]; then
+  dev_cmd="mix phx.server"
+  test_cmd="mix test"
+elif [ -f Makefile ] || [ -f makefile ]; then
+  grep -qE '^dev:'  Makefile makefile 2>/dev/null && dev_cmd="make dev"   || true
+  grep -qE '^test:' Makefile makefile 2>/dev/null && test_cmd="make test" || true
 fi
 
 infra_cmd=""

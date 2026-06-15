@@ -16,16 +16,28 @@ command -v nvim >/dev/null || { warn "Neovim not found"; exit 1; }
 command -v tmux >/dev/null || { warn "tmux not found"; exit 1; }
 command -v git  >/dev/null || { warn "git not found";  exit 1; }
 
-for tool in lazygit fd; do
-  if ! command -v "$tool" >/dev/null 2>&1; then
-    if command -v brew >/dev/null 2>&1; then
-      info "Installing $tool via brew"
-      brew install "$tool"
-    else
-      warn "$tool missing and brew not available — install it manually"
-    fi
-  fi
-done
+# cross-platform package install: brew (macOS) / apt / dnf / pacman (Linux).
+# pkg names differ per manager, so map them. $1 = the command we probe for.
+pkg_install() {
+  local cmd="$1"
+  local brew_pkg="$2" apt_pkg="$3" dnf_pkg="$4" pac_pkg="$5"
+  if   command -v brew   >/dev/null 2>&1; then info "Installing $cmd via brew";   brew install "$brew_pkg"
+  elif command -v apt-get>/dev/null 2>&1; then info "Installing $cmd via apt";    sudo apt-get install -y "$apt_pkg"
+  elif command -v dnf    >/dev/null 2>&1; then info "Installing $cmd via dnf";    sudo dnf install -y "$dnf_pkg"
+  elif command -v pacman >/dev/null 2>&1; then info "Installing $cmd via pacman"; sudo pacman -S --noconfirm "$pac_pkg"
+  else warn "$cmd missing and no known package manager — install it manually"; fi
+}
+
+# tool        cmd         brew         apt          dnf          pacman
+ensure_tool() {  # $1=cmd, rest=pkg names
+  command -v "$1" >/dev/null 2>&1 || pkg_install "$@"
+}
+ensure_tool lazygit  lazygit     lazygit      lazygit      lazygit
+ensure_tool fd       fd          fd-find      fd-find      fd
+ensure_tool rg       ripgrep     ripgrep      ripgrep      ripgrep
+# imagemagick powers inline image rendering (snacks.image); 'magick' is the binary
+command -v magick >/dev/null 2>&1 || command -v convert >/dev/null 2>&1 || \
+  pkg_install imagemagick imagemagick imagemagick ImageMagick imagemagick
 
 # --- backup helper: never clobber a real (non-symlink) file ---
 backup() {
@@ -64,8 +76,8 @@ fi
 cat <<'NEXT'
 
 Next steps:
-  1. Open `nvim` once — Mason will install LSPs/formatters/debuggers.
-  2. Run `claude setup-token` so CodeCompanion can use your Claude subscription.
+  1. Open `nvim` once — Mason will install LSPs/formatters/debuggers/linters.
+  2. Run `claude` once and log in — the in-editor AI uses this login (no API key).
   3. In tmux, press  C-a  then  I  to install tmux plugins.
   4. Ensure your terminal uses a Nerd Font (for icons).
   5. From any project directory, run:  dev

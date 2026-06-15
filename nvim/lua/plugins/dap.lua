@@ -5,6 +5,8 @@ return {
       { "rcarriga/nvim-dap-ui", dependencies = { "nvim-neotest/nvim-nio" } },
       "theHamsta/nvim-dap-virtual-text",
       "jay-babu/mason-nvim-dap.nvim",
+      "leoluz/nvim-dap-go",        -- zero-config go launch (debug nearest test / package)
+      "mfussenegger/nvim-dap-python", -- zero-config python launch (uses debugpy)
     },
     keys = {
       { "<leader>db", function() require("dap").toggle_breakpoint() end, desc = "Toggle breakpoint" },
@@ -22,6 +24,9 @@ return {
         automatic_installation = true,
         handlers = {},
       })
+      -- language-specific zero-config launchers (debug nearest test, etc.)
+      require("dap-go").setup()
+      require("dap-python").setup("python") -- uses the debugpy installed via mason
       dap.listeners.before.attach.dapui_config = function() dapui.open() end
       dap.listeners.before.launch.dapui_config = function() dapui.open() end
       dap.listeners.before.event_terminated.dapui_config = function() dapui.close() end

@@ -15,6 +15,10 @@ return {
         yamlls = {},
         jsonls = {},
         lua_ls = {},
+        bashls = {},        -- shell scripts (this repo's install.sh / bin/dev)
+        terraformls = {},   -- terraform / HCL
+        taplo = {},         -- TOML (Cargo.toml, pyproject.toml, etc.)
+        clangd = {},        -- C / C++
       },
     },
   },

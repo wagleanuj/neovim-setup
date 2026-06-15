@@ -30,6 +30,7 @@ Launch a project: **`dev`** · re-attach later: **`tmux attach -t <repo>`**
 | `C-a l` | Last window (toggle between two) |
 | `C-a c` | New window · `C-a ,` rename · `C-a &` kill (default) |
 | `C-a w` | Window picker (list) |
+| `C-a C-j` | **Fuzzy session switcher** (tmux-fzf; needs `fzf`) |
 
 ### Panes (splits in a window)
 | Key | Action |
@@ -47,7 +48,7 @@ Launch a project: **`dev`** · re-attach later: **`tmux attach -t <repo>`**
 | `C-a d` | **Detach** (keeps running; resume with `dev`) |
 | `C-a Q` | **Kill whole session** (asks y/n) |
 | `C-a X` | Kill current window (asks y/n) |
-| `C-a [` | Scroll/copy mode (vim keys; `q` exits) |
+| `C-a [` | Scroll/copy mode (vim keys; `y` copies to **system clipboard**, `q` exits) |
 | `C-a r` | Reload tmux config · `C-a I` install plugins |
 
 From a plain shell: `tmux ls` (list) · `tmux attach -t <name>` · `tmux kill-session -t <name>`.
@@ -82,10 +83,15 @@ Mouse is **on** — click windows/panes, scroll, drag borders.
 |-----|--------|
 | `Space Space` / `Space ff` | Find files (fuzzy) |
 | `Space /` / `Space sg` | Grep the project |
+| `Space sr` | **Search & replace across the project** (grug-far) |
+| `Space sw` | Search & replace word under cursor |
 | `Space fr` | Recent files · `Space fc` config |
 | `Space ,` | Open buffers |
 | `Space e` | Toggle the neo-tree sidebar |
 | `-` | Open oil (filesystem as a buffer) |
+
+grug-far panel: edit the **Search**/**Replace** fields at the top, results stream below;
+`Enter` jumps to a match · `Space sr` again on a selection scopes to that range.
 
 Picker keys: type to filter · `C-n`/`C-p` move · `Enter` open · `C-v` vsplit · `C-x` hsplit · `Esc` cancel.
 
@@ -118,6 +124,11 @@ Picker keys: type to filter · `C-n`/`C-p` move · `Enter` open · `C-v` vsplit 
 | `]e` / `[e` | Next / prev error |
 | `C-Space` | Trigger completion · `Tab` accept · `C-e` cancel |
 | `Space cl` | LSP info |
+| `Space co` | **Outline** (symbols panel — aerial) |
+
+Breadcrumbs (barbecue) show the symbol path in the winbar at the top of each window.
+Servers: vtsls · vue · pyright · gopls · rust-analyzer · tailwind · prisma · graphql ·
+docker · yaml · json · lua · **bash · terraform · taplo (TOML) · clangd (C/C++)**.
 
 ---
 
@@ -145,6 +156,9 @@ Formatters: prettier · ruff+black · gofmt · rustfmt · stylua (LSP fallback i
 | `Space xt` | Todo/Fixme comments |
 
 In the panel: `j/k` move · `Enter` jump · `Tab` fold group · `q` close.
+
+Beyond LSP, **nvim-lint** adds file-type linters on save/read: shellcheck (sh/bash),
+hadolint (Dockerfile), markdownlint (md), yamllint (yaml), golangci-lint (go).
 
 ---
 
@@ -267,6 +281,10 @@ Saved automatically on quit, **per directory**. tmux layout auto-restores on reb
 | `Space us` | Spell · `Space uw` wrap · `Space ul` line numbers |
 | `Space ud` | Diagnostics · `Space uh` inlay hints |
 | `Space uz` | Zen mode |
+| `Space uc` | Toggle **sticky context** (function pinned at top) |
+| `Space uu` | Toggle **undotree** (persistent undo history) |
+
+Hex/rgb/tailwind colors render as live swatches in code (nvim-colorizer).
 
 ---
 
