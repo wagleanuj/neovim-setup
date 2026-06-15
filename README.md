@@ -354,7 +354,9 @@ Files edited by either are auto-reloaded in Neovim when you switch back (tmux fo
 | `Space ql` | Restore the very last session (any folder) |
 | `Space qd` | Don't save the current session |
 
-By default this is **manual** (press `Space qs` after opening a project). tmux-continuum
+Opening a **bare `nvim`** in a directory now **auto-restores** that directory's last
+session (open files + splits); the `Space q*` keys remain for manual control. A launch
+with a file argument or piped stdin won't auto-restore. tmux-continuum separately
 auto-restores the *window/pane layout* on a full reboot.
 
 ---

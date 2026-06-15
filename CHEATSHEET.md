@@ -69,7 +69,7 @@ Mouse is **on** — click windows/panes, scroll, drag borders.
 | `Shift-h` / `Shift-l` | previous / next buffer (tab) |
 | `Space bd` | close buffer · `Space ,` buffer picker |
 | `Space w` | window cmds (`wv` split, `wd` close) |
-| `C-h/j/k/l` | move between splits |
+| `C-h/j/k/l` | move between splits **and tmux panes** (seamless, no prefix) |
 | `Ctrl-w v` / `Ctrl-w s` | split right / below (always works) |
 | `Ctrl-w =` / `Ctrl-w \|` | equalize / maximize width |
 | `Space l` Lazy · `Space cm` Mason | plugin / tool managers |
@@ -118,7 +118,7 @@ Picker keys: type to filter · `C-n`/`C-p` move · `Enter` open · `C-v` vsplit 
 | `gr` / `gI` / `gy` | References / implementation / type def |
 | `K` | Hover docs (again to enter float) |
 | `Space ca` | Code action (fix / import) |
-| `Space cr` | Rename symbol (project-wide) |
+| `Space cr` | Rename symbol (project-wide; **live preview** as you type) |
 | `Space cd` | Line diagnostics |
 | `]d` / `[d` | Next / prev diagnostic |
 | `]e` / `[e` | Next / prev error |
@@ -265,11 +265,14 @@ Full-screen agent: tmux **ai window** (`C-a 5`) runs `claude` for big multi-file
 
 | Key | Action |
 |-----|--------|
-| `Space qs` | Restore this folder's last session (files + splits) |
+| (bare `nvim`) | **Auto-restores** this folder's session on startup |
+| `Space qs` | Manually restore this folder's last session (files + splits) |
 | `Space ql` | Restore the very last session |
 | `Space qd` | Don't save current session |
 
-Saved automatically on quit, **per directory**. tmux layout auto-restores on reboot.
+Saved automatically on quit, **per directory**, and now auto-loaded when you open a
+bare `nvim` in that directory (a launch with a file arg or piped stdin won't restore).
+tmux layout auto-restores on reboot.
 
 ---
 
